@@ -131,7 +131,9 @@
                 { "columnMatch": "ResourceId", "formatter": 5 },
                 { "columnMatch": "AnomalyScoring", "formatter": 8, "formatOptions": { "palette": "greenRed" } },
                 { "columnMatch": "Log", "formatter": 8, "formatOptions": { "palette": "greenRed" } },
-                { "columnMatch": "Block", "formatter": 8, "formatOptions": { "palette": "greenRed" } }
+                { "columnMatch": "Block", "formatter": 8, "formatOptions": { "palette": "greenRed" } },
+                { "columnMatch": "Redirect", "formatter": 8, "formatOptions": { "palette": "greenRed" } },
+                { "columnMatch": "JSChallenge", "formatter": 8, "formatOptions": { "palette": "greenRed" } }
               ],
               "rowLimit": 500,
               "hierarchySettings": {
@@ -328,12 +330,14 @@
                 "type": 3,
                 "content": {
                   "version": "KqlItem/1.0",
-                  "query": "AzureDiagnostics \r\n| where Category == \"FrontDoorWebApplicationFirewallLog\"\r\n| where trackingReference_s == '{TransactionId}'\r\n| project action_s, ruleName_s, host_s, requestUri_s, clientIP_s, TimeGenerated",
+                  "query": "AzureDiagnostics \r\n| where Category == \"FrontDoorWebApplicationFirewallLog\"\r\n| where trackingReference_s == '{TransactionId}'\r\n| project action_s, ruleName_s, host_s, requestUri_s, clientIP_s, details_msg_s, details_matches_s, details_data_s, TimeGenerated",
                   "size": 0,
                   "title": "Rules that got triggered for selected request",
                   "exportedParameters": [
                     { "fieldName": "trackingReference_s", "parameterName": "TransactionId" },
-                    { "fieldName": "ruleName_s", "parameterName": "message", "parameterType": 1 }
+                    { "fieldName": "ruleName_s", "parameterName": "message", "parameterType": 1 },
+                    { "fieldName": "details_msg_s", "parameterName": "details", "parameterType": 1 },
+                    { "fieldName": "details_matches_s", "parameterName": "matcheddata", "parameterType": 1 }
                   ],
                   "queryType": 0,
                   "resourceType": "microsoft.operationalinsights/workspaces",
@@ -348,7 +352,10 @@
                           "thresholdsOptions": "icons",
                           "thresholdsGrid": [
                             { "operator": "==", "thresholdValue": "Log", "representation": "2", "text": "{0}{1}" },
+                            { "operator": "==", "thresholdValue": "AnomalyScoring", "representation": "2", "text": "{0}{1}" },
                             { "operator": "==", "thresholdValue": "Block", "representation": "4", "text": "{0}{1}" },
+                            { "operator": "==", "thresholdValue": "JSChallenge", "representation": "2", "text": "{0}{1}" },
+                            { "operator": "==", "thresholdValue": "Redirect", "representation": "3", "text": "{0}{1}" },
                             { "operator": "Default", "thresholdValue": null, "representation": "more", "text": "{0}{1}" }
                           ]
                         }
@@ -371,6 +378,9 @@
                       { "columnId": "host_s", "label": "host" },
                       { "columnId": "requestUri_s", "label": "request URI" },
                       { "columnId": "clientIP_s", "label": "client IP" },
+                      { "columnId": "details_msg_s", "label": "message" },
+                      { "columnId": "details_matches_s", "label": "matched data" },
+                      { "columnId": "details_data_s", "label": "details" },
                       { "columnId": "TimeGenerated", "label": "time generated" }
                     ]
                   }
@@ -380,7 +390,7 @@
               {
                 "type": 1,
                 "content": {
-                  "json": "## Selection Summary:\r\n\r\nYou were looking for example requests which were impacted by WAF rule: **{RuleId}**.  \r\n\r\nOn the host \"*{HostName}*\" and url \"*{FullUri}*\" you have found an HTTP request impacted by this rule, with tracking reference equal to *{TransactionId}*.  \r\n\r\nMore info on this request and the selected rule:\r\n- Rule: {message}"
+                  "json": "## Selection Summary:\r\n\r\nYou were looking for example requests which were impacted by WAF rule: **{RuleId}**.  \r\n\r\nOn the host \"*{HostName}*\" and url \"*{FullUri}*\" you have found an HTTP request impacted by this rule, with tracking reference equal to *{TransactionId}*.  \r\n\r\nMore info on this request and the selected rule:\r\n- Rule: {message}\r\n- Details: {details}\r\n- Matched Data: {matcheddata}"
                 },
                 "name": "text - 7"
               }
@@ -515,12 +525,14 @@
                 "type": 3,
                 "content": {
                   "version": "KqlItem/1.0",
-                  "query": "AzureDiagnostics \r\n| where Category == \"FrontDoorWebApplicationFirewallLog\"\r\n| where trackingReference_s == '{TransactionId}'\r\n| project action_s, ruleName_s, host_s, requestUri_s, clientIP_s, TimeGenerated",
+                  "query": "AzureDiagnostics \r\n| where Category == \"FrontDoorWebApplicationFirewallLog\"\r\n| where trackingReference_s == '{TransactionId}'\r\n| project action_s, ruleName_s, host_s, requestUri_s, clientIP_s, details_msg_s, details_matches_s, details_data_s, TimeGenerated",
                   "size": 0,
                   "title": "Rules that got triggered for selected request",
                   "exportedParameters": [
                     { "fieldName": "trackingReference_s", "parameterName": "TransactionId" },
-                    { "fieldName": "ruleName_s", "parameterName": "message", "parameterType": 1 }
+                    { "fieldName": "ruleName_s", "parameterName": "message", "parameterType": 1 },
+                    { "fieldName": "details_msg_s", "parameterName": "details", "parameterType": 1 },
+                    { "fieldName": "details_matches_s", "parameterName": "matcheddata", "parameterType": 1 }
                   ],
                   "queryType": 0,
                   "resourceType": "microsoft.operationalinsights/workspaces",
@@ -535,7 +547,10 @@
                           "thresholdsOptions": "icons",
                           "thresholdsGrid": [
                             { "operator": "==", "thresholdValue": "Log", "representation": "2", "text": "{0}{1}" },
+                            { "operator": "==", "thresholdValue": "AnomalyScoring", "representation": "2", "text": "{0}{1}" },
                             { "operator": "==", "thresholdValue": "Block", "representation": "4", "text": "{0}{1}" },
+                            { "operator": "==", "thresholdValue": "JSChallenge", "representation": "2", "text": "{0}{1}" },
+                            { "operator": "==", "thresholdValue": "Redirect", "representation": "3", "text": "{0}{1}" },
                             { "operator": "Default", "thresholdValue": null, "representation": "more", "text": "{0}{1}" }
                           ]
                         }
@@ -558,6 +573,9 @@
                       { "columnId": "host_s", "label": "host" },
                       { "columnId": "requestUri_s", "label": "request URI" },
                       { "columnId": "clientIP_s", "label": "client IP" },
+                      { "columnId": "details_msg_s", "label": "message" },
+                      { "columnId": "details_matches_s", "label": "matched data" },
+                      { "columnId": "details_data_s", "label": "details" },
                       { "columnId": "TimeGenerated", "label": "time generated" }
                     ]
                   }
@@ -567,7 +585,7 @@
               {
                 "type": 1,
                 "content": {
-                  "json": "## Selection Summary:\r\n\r\nYou were looking for requests which triggered a WAF rule on url: _{RequestUri}_.  \r\nYou have found an HTTP request impacted by this rule, with tracking reference equal to *{TransactionId}*.  \r\n\r\nMore info on this request and the selected rule:\r\n- Rule: {message}"
+                  "json": "## Selection Summary:\r\n\r\nYou were looking for requests which triggered a WAF rule on url: _{RequestUri}_.  \r\nYou have found an HTTP request impacted by this rule, with tracking reference equal to *{TransactionId}*.  \r\n\r\nMore info on this request and the selected rule:\r\n- Rule: {message}\r\n- Details: {details}\r\n- Matched Data: {matcheddata}"
                 },
                 "name": "text - 7 - Copy"
               }
