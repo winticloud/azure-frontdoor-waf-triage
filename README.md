@@ -8,7 +8,7 @@ It is designed to parse WAF logs from **Azure Front Door Premium** with a WAF Po
 
 ## Prerequisites
 
-- Azure Front Door (Standard or Premium) with a WAF Policy attached
+- Azure Front Door **Premium** with a WAF Policy attached (Premium is required for managed rulesets such as `Microsoft_DefaultRuleSet` and `Microsoft_BotManagerRuleSet`)
 - Diagnostic settings on the Front Door profile sending the following log categories to a Log Analytics workspace:
   - `FrontDoorWebApplicationFirewallLog`
   - `FrontDoorAccessLog`
